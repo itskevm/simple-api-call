@@ -7,6 +7,7 @@ const appCss = css`
   background: #95A4AA;
   height: 100%;
   min-height: 100vh;
+  min-width: 305px;
   font-family: "Rubik",sans-serif;
 `
 
