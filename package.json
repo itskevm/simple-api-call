@@ -1,7 +1,7 @@
 {
   "name": "simple-api-call",
-  "version": "0.2.0",
-  "description": "",
+  "version": "1.0.0",
+  "description": "Uses a form to send data to a backend server to make Get and Post requests",
   "main": ".index.js",
   "babel": {
     "presets": [

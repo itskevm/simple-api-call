@@ -1,4 +1,4 @@
 # Simple API Call
 
-refine as needed
+Install with Yarn
 

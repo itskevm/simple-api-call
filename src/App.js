@@ -50,6 +50,14 @@ const inputCss = css`
   padding: 10px;
   border: none;
   border-radius: 10px;
+  &[readOnly]
+  {
+    background-color: #d3d3d3;
+    color: #fff;
+  }
+  // &[valid] {
+  //  background-color: valid;
+  // }
   &:focus {
     outline: #ff6900 solid 1px;
   }
@@ -85,74 +93,117 @@ const buttonCss = css`
   }
 `
 
+// Set as globals outside of class because of initial onChange design (kept for simplicity)
 let mainLink = "https://jsonplaceholder.typicode.com/users"
+let secondLink = "https://scheduler.luminarycxm.com/api/v1/cleaned/data/test/"
 
 export default class App extends React.Component {
   constructor(props) {
     console.log("App constructor called")
     super(props)
-    this.state = {getPoint: mainLink, nombre: ''}
-    this.handleChange = this.handleChange.bind(this)
+    this.state = {
+      nombre: '',
+      renderTemplate: false,
+      highlightError: false
+    }
     this._onButtonClick = this._onButtonClick.bind(this)
     this.setNombre = this.setNombre.bind(this)
   }
 
+  // This is like 'handleChange
   setNombre = e => {
-    this.setState({nombre: e.target.value})
-  }
-
-  _onButtonClick() {
     this.setState({
-      renderTemplate: true,
+      nombre: e.target.value
     })
+    if (this.state.nombre == "") {
+      console.log('input error forsure')
+      this.setState({
+        highlightError: true
+      })
+    }
   }
 
-  handleChange = e => {
-    console.log("we gave: " + e.target.value)
-    this.setState({getPoint: e.target.value})
-    mainLink = e.target.value
-    //console.log("we set: " + this.state.getPoint)
+  _onButtonClick(e) {
+    if (/\S/.test(this.state.nombre)) {
+      console.log('we fired IF')
+      this.setState({
+        renderTemplate: true,
+        highlightError: false
+      })  
+    } else {
+      console.log('input error forsure')
+      this.setState({
+        highlightError: true
+      })
+    }
+
+    // line below means we put this <button> in <form> without redirect
+    e.preventDefault()
   }
 
+  // Keeping for future reference of syntax
+  // quick = async (e) => {
+  //   console.log('Began')
+  //   const response = await fetch('http://localhost:3000/',
+  //   {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: '{"applicantName" : "Kevin", "incomingUrl" : "https://jsonplaceholder.typicode.com/users", "outgoingUrl" : "https://scheduler.luminarycxm.com/api/v1/cleaned/data/test/"}'
+  //   })
+  //   await preventDefault()
+  //   const data = await response.json()
+  //   console.log(data)
+  //   console.log('End')
+  // }
 
-
-render() {
-  return (
-    <div css={appCss}>
-      <header css={headerCss}>
-        Welcome
-      </header>
-      <div css={wrapperCss}>
-        <h1 style={{fontFamily: 'Fjalla One, sans-serif', textAlign: 'center'}}>SIMPLE API CALL</h1>
-        <form css={formCss}>
-          <label css={labelCss}>
-            <p>Data coming from:</p>
-            <input
-              css={inputCss}
-              type="text"
-              name="name"
-              readOnly={true}
-              defaultValue="https://jsonplaceholder.typicode.com/users"
-              onChange={this.handleChange}/>
-          </label>
-          <label css={labelCss}>
-            <p>Applicant name</p>
-            <input 
-              css={inputCss}
-              type="text"
-              name="nombre"
-              onChange={ this.setNombre }
-              value={ this.state.nombre } />
-          </label>
-        </form>
-        <button css={buttonCss} onClick={this._onButtonClick}>Send post request</button>
+  render() {
+    return (
+      <div css={appCss}>
+        <header css={headerCss}>
+          Welcome
+        </header>
+        <div css={wrapperCss}>
+          <h1 style={{fontFamily: 'Fjalla One, sans-serif', textAlign: 'center'}}>SIMPLE API CALL</h1>
+          <form css={formCss}>
+            <label css={labelCss}>
+              <p>Data coming from:</p>
+              <input
+                css={inputCss}
+                type="incomingUrl"
+                name="incomingUrl"
+                readOnly
+                defaultValue={mainLink} />
+            </label>
+            <label css={labelCss}>
+              <p>Data going to:</p>
+              <input 
+                css={inputCss}
+                type="outgoingUrl"
+                name="outgoingUrl"
+                readOnly
+                defaultValue={secondLink} />
+            </label>
+            <label css={labelCss}>
+              <p>Applicant name</p>
+              <input 
+                css={inputCss}
+                type="text"
+                name="nombre"
+                placeholder="Name must be entered"
+                required
+                valid={ this.state.highlightError ? '#ff9999':'#ffffff'}
+                onChange={ this.setNombre }
+                value={ this.state.nombre } />
+            </label>
+            <button css={buttonCss} onClick={this._onButtonClick}>Send post request</button>
+          </form>
+        </div>
+        <div>
+          {this.state.renderTemplate && <Template incoming={mainLink} outgoing={secondLink} nom={this.state.nombre}/>}
+        </div>
       </div>
-      <div>
-        {this.state.renderTemplate && <Template url={mainLink} nom={this.state.nombre}/>}
-      </div>
-
-      {/*console.log("TIME TO RENDER THE TEMPLATE! w/ " + this.state.getPoint)*/}
-    </div>
-  )
-}
+    )
+  }
 }

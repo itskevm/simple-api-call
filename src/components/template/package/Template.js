@@ -2,85 +2,91 @@ import React from 'react'
 import { css } from '@emotion/react'
 
 const templateCss = css`
-  color: red !important;
+  color: #fff;
   font-size: 28px;
 `
+
+const isLocal = () => {
+  if (window.location.href == "http://localhost:8080/") {
+    return true
+  }
+  return false
+}
+
 export default class Template extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      url: props.url,
+      incoming: props.incoming,
+      outgoing: props.outgoing,
+      server: isLocal() ? 'http://localhost:3000/':'https://simple-api-backend.herokuapp.com/',
       nom: props.nom,
       loading: true,
-      users: null,
-      success: true,
+      success: false,
+      message: ''
     }
   }
 
-  // ignore for now
+  /*  // ignore: attempt at onChange urls address (proj uses static urls)
   async componentDidUpdate(prevProps) {
-    if (this.props.url !== prevProps.url) {
+    if (this.props.incoming !== prevProps.incoming) {
       try {
         this.setState({ loading: true })
-        const response = await fetch(this.props.url)
+        const response = await fetch(this.props.incoming)
         const data = await response.json()
         this.setState({ loading: false, users: data })
       } catch(e) {
         console.error(e.message)
       }
     }
-  }
+  }*/
 
   async componentDidMount() {
-    console.log('Component Mounting')
-    fetch(this.state.url).then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error('Something went wrong');
-      }
-    })
-    .then((responseJson) => {
-      console.log('got eem')
-    })
-    .catch((error) => {
-      this.setState({ loading: false, success: false })
-      console.log(error)
-    })
-
-    const response = await fetch(this.state.url)
-    const data = await response.json()
-    this.setState({ loading: false, users: data, success: true })
-    console.log('Name prop: ' + this.props.nom)
-    console.log('Component Finished Mounting')
-    const fullObject = { applicant: this.props.nom , users: data}
-    const foJSON = JSON.stringify(fullObject)
-
-    fetch('https://scheduler.luminarycxm.com/api/v1/cleaned/data/test/', {
+    isLocal() && console.log('Local env mode')
+    const bodyObj = { 
+      applicantName : this.state.nom,
+      incomingUrl : this.state.incoming,
+      outgoingUrl : this.state.outgoing
+    }
+    const bodyJson = JSON.stringify(bodyObj)
+  
+    fetch(this.state.server,{
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(fullObject),
+      headers: new Headers({
+                 'Content-Type': 'application/json',
+        }),
+      body: bodyJson
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Success:', data);
+      this.setState({ success: true, message: data.message, loading: false })
+      console.log('Success:', data)
     })
     .catch((error) => {
-      console.error('Error:', error);
-    });
-
+      this.setState({ success: false, message: error, loading: false})
+      console.error('Error:', error)
+    })
   }
 
+  // Same way of doing the previous fetch part
+  // Keeping for future reference
+  //   const response = await fetch(this.state.server, {
+  //     method: 'POST',
+  //     headers: new Headers({
+  //       'Content-Type':'application/json',
+  //     }),
+  //     body: bodyJson
+  //   })
+  //   const data = await response.json()
+  //   this.setState({ loading: false, message: data.message, success: true })
+
+  
   render() {
-    console.log("we got: " + this.state.url)
     return (
       <>
       <div css={templateCss}>
         <div>
-          {this.state.users ? "Data found!" : "Loading..."}
-          {!this.state.success && "Failed to load"}
+          {this.state.loading ? "Loading..." : this.state.message}
         </div>
       </div>
       </>
