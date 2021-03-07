@@ -1,8 +1,13 @@
 {
   "name": "simple-api-call",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Uses a form to send data to a backend server to make Get and Post requests",
   "main": ".index.js",
+  "engines":{
+    "node":"14.15.3",
+    "npm":"6.14.9",
+    "yarn":"1.22.5"
+  },
   "babel": {
     "presets": [
       "@babel/preset-env",
