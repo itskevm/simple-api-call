@@ -1,17 +1,19 @@
-var express = require('express');
-var path = require('path');
+var express = require('express')
+var path = require('path')
 var port = process.env.PORT || 8080;
-var app = express();
+var app = express()
 
-app.use(express.static(path.join(__dirname,'/dist')));
+app.use(express.static(path.join(__dirname,'/dist')))
 
 app.get('*', (req, res) => {
+    console.log('GET request made.')
     res.sendFile(path.resolve('index.html'))
-});
+})
 
-app.listen(port);
+app.listen(port)
 
-console.log('Server started.');
+console.log('Server started.')
+console.log(`Server details: dirname: ${__dirname}, port: ${port}`)
 
 
 /*
