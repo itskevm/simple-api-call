@@ -16,9 +16,9 @@
     ]
   },
   "scripts": {
-    "start": "./node_modules/webpack/bin/webpack.js -p --progress",
+    "start": "webpack-dev-server --open",
     "build": "webpack --mode production",
-    "heroku-postbuild": "webpack -p --config ./webpack.prod.config.js --progress",
+    "heroku-postbuild": "webpack -p --config ./webpack.config.js --progress",
     "dev": "webpack-dev-server --open",
     "test": "echo \"Error: no test specified\" && exit 1",
     "create": "webpack"
