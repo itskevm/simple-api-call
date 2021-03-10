@@ -7,7 +7,7 @@ app.use(express.static(path.join(__dirname,'/dist')))
 
 app.get('*', (req, res) => {
     console.log('GET request made.')
-    res.sendFile(path.resolve('index.html'))
+    res.sendFile(path.resolve(__dirname,'dist/index.html'))
 })
 
 app.listen(port)
