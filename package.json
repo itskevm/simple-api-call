@@ -16,7 +16,7 @@
     ]
   },
   "scripts": {
-    "start": "webpack-dev-server --open",
+    "start": "webpack-dev-server",
     "build": "webpack --mode production",
     "heroku-postbuild": "webpack -p --config ./webpack.config.js --progress",
     "dev": "webpack-dev-server --open",
